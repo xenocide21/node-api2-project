@@ -8,24 +8,18 @@ router.use(express.json());
 const Posts = require("../data/db.js");
 
 router.get("/test", (req, res) => {
-  res.send(`
-    
+  res.send(` 
       <p>Welcome to the posts Router API</p>
     `);
 });
-
 //Create a post
 router.post("/", (req, res) => {
   const { title, contents } = req.body;
   Posts.insert(req.body)
     .then(post => {
-      if (!title || !contents) {
-        res.status(400).json({
-          errorMessage: "Please provide title and contents for the post."
-        });
-      } else {
-        res.status(201).json(post);
-      }
+      !title || !contents
+          ? res.status(400).json({errorMessage: "Please provide title and contents for the post."})
+          : res.status(201).json(post)
     })
     .catch(error => {
       console.log(error);
@@ -55,7 +49,6 @@ router.post("/:id/comments", (req, res) => {
       });
     });
 });
-
 //Get posts
 router.get("/", (req, res) => {
   Posts.find(req.query)
@@ -75,14 +68,9 @@ router.get("/:id", (req, res) => {
   Posts.findById(req.params.id)
 
     .then(post => {
-      if (!post[0]) {
-        res
-          .status(404)
-          .json({ message: "The post with the specified ID does not exist." });
-      } else {
-        console.log(post);
-        res.status(200).json(post);
-      }
+      !post[0]
+          ? res.status(404).json({ message: "The post with the specified ID does not exist." })
+          : res.status(200).json(post)
     })
     .catch(error => {
       // log error to database
@@ -96,14 +84,9 @@ router.get("/:id", (req, res) => {
 router.get("/:id/comments", (req, res) => {
   Posts.findCommentById(req.params.id)
     .then(comment => {
-      if (!comment[0]) {
-        res
-          .status(404)
-          .json({ message: "The post with the specified ID does not exist." });
-      } else {
-        console.log(comment);
-        res.status(200).json(comment);
-      }
+      !comment[0]
+          ? res.status(404).json({ message: "The post with the specified ID does not exist." })
+          : res.status(200).json(comment)
     })
     .catch(error => {
       console.log(error);
@@ -116,13 +99,9 @@ router.delete("/:id", (req, res) => {
   const id = req.params.id;
   Posts.remove(id)
     .then(post => {
-      if (post) {
-        res.status(200).json(post);
-      } else {
-        res.status(404).json({
-          message: "The post with the specified ID does not exist."
-        });
-      }
+      post
+        ? res.status(200).json(post)
+        : res.status(404).json({message: "The post with the specified ID does not exist."});
     })
     .catch(error => {
       console.log(error);
@@ -144,15 +123,9 @@ router.put("/:id", (req, res) => {
   }
   Posts.update(id, user)
     .then(post => {
-      if (!post) {
-        res.status(404).json({
-          message: "The post with the specified ID does not exist."
-        });
-      } else {
-        res.status(200).json({
-          message: "The post information was updated successfully"
-        });
-      }
+      !post
+        ? res.status(404).json({message: "The post with the specified ID does not exist."})
+        : res.status(200).json({message: "The post information was updated successfully"})
     })
     .catch(error => {
       console.log(error);
